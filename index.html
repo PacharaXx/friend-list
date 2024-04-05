@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- import bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Friend Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .buttonGroup {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            max-width: 300px;
+            margin-top: 10px;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h2>Friend List Information</h2>
+        <button id="start" class="btn btn-primary">Start</button>
+    </div>
+
+    <script>
+        const friends = [];
+        const container = document.getElementById('container');
+        function renderFriendList() {
+            // render list
+            const ul = document.createElement('ul');
+            ul.innerHTML = friends.map(friend => `<li> Name:${friend.name} Age:${friend.age}</li>`).join('');
+            container.appendChild(ul);
+            const div = document.createElement('div');
+            div.className = 'buttonGroup';
+            container.appendChild(div);
+            const TotalButton = document.createElement('button');
+            TotalButton.textContent = 'Calculate Total';
+            TotalButton.className = 'btn btn-primary';
+            TotalButton.addEventListener('click', () => {
+                calculateTotal();
+            })
+            div.appendChild(TotalButton);
+
+            AvgButton = document.createElement('button');
+            AvgButton.textContent = 'Calculate Average';
+            AvgButton.className = 'btn btn-primary';
+            AvgButton.addEventListener('click', () => {
+                calculateAverage();
+            });
+            div.appendChild(AvgButton);
+
+            lowestButton = document.createElement('button');
+            lowestButton.textContent = 'Find Lowest Age';
+            lowestButton.className = 'btn btn-primary';
+            lowestButton.addEventListener('click', () => {
+                findLowestAge();
+            });
+            div.appendChild(lowestButton);
+
+            highestButton = document.createElement('button');
+            highestButton.textContent = 'Find Highest Age';
+            highestButton.className = 'btn btn-primary';
+            highestButton.addEventListener('click', () => {
+                findHighestAge();
+            });
+            div.appendChild(highestButton);
+
+            // reset button
+            const reset = document.createElement('button');
+            reset.textContent = 'Reset';
+            reset.className = 'btn btn-danger';
+            reset.addEventListener('click', () => {
+                friends.length = 0;
+                // remove list
+                ul.remove();
+                // remove button
+                TotalButton.remove();
+                AvgButton.remove();
+                lowestButton.remove();
+                highestButton.remove();
+                reset.remove();
+
+                // remove all p tag
+                const p = document.querySelectorAll('p');
+                p.forEach(p => p.remove());
+                // random number 1-9
+                let random = Math.floor(Math.random() * 9) + 1;
+                renderListOfInput(random);
+            });
+            div.appendChild(reset);
+        }
+
+        function calculateTotal() {
+            const totalAge = friends.reduce((acc, friend) => acc + parseInt(friend.age), 0);
+            const p = document.createElement('p');
+            p.textContent = `Total Age: ${totalAge}`;
+            container.appendChild(p);
+        }
+
+        function calculateAverage() {
+            const totalAge = friends.reduce((acc, friend) => acc + parseInt(friend.age), 0);
+            const averageAge = totalAge / friends.length;
+            const p = document.createElement('p');
+            p.textContent = `Average Age: ${averageAge}`;
+            container.appendChild(p);
+        }
+
+        function findLowestAge() {
+            const lowestAge = friends.reduce((acc, friend) => {
+                if (parseInt(friend.age) < acc) {
+                    acc = parseInt(friend.age);
+                }
+                return acc;
+            }, parseInt(friends[0].age));
+            const p = document.createElement('p');
+            p.textContent = `Lowest Age: ${lowestAge}`;
+            container.appendChild(p);
+            const listName = friends.filter(friend => parseInt(friend.age) === lowestAge).map(friend => friend.name);
+            for (let i = 0; i < listName.length; i++) {
+                const p2 = document.createElement('p');
+                p2.textContent = `Name: ${listName[i]} Age: ${lowestAge}`;
+                container.appendChild(p2);
+            }
+        }
+
+        function findHighestAge() {
+            const highestAge = friends.reduce((acc, friend) => {
+                if (parseInt(friend.age) > acc) {
+                    acc = parseInt(friend.age);
+                }
+                return acc;
+            }, parseInt(friends[0].age));
+            const p = document.createElement('p');
+            p.textContent = `Highest Age: ${highestAge}`;
+            container.appendChild(p);
+            const listName = friends.filter(friend => parseInt(friend.age) === highestAge).map(friend => friend.name);
+            for (let i = 0; i < listName.length; i++) {
+                const p2 = document.createElement('p');
+                p2.textContent = `Name: ${listName[i]} Age: ${highestAge}`;
+                container.appendChild(p2);
+            }
+        }
+
+        function validate() {
+            // validate all input tags
+            const inputs = document.querySelectorAll('input');
+            let isValid = true; // Flag variable to track validity
+
+            inputs.forEach(input => {
+                if (input.value === '') {
+                    isValid = false; // Set flag to false if any input is empty
+                }
+            });
+
+            return isValid; // Return the flag value indicating overall validity
+        }
+
+
+        function renderListOfInput(amount) {
+            // Name and Age
+            const title = document.querySelector('#container h2');
+            console.log(title);
+            if (title === null) {
+                const h2 = document.createElement('h2');
+                h2.textContent = `Enter ${amount} friend information`;
+                container.appendChild(h2);
+            } else {
+                title.textContent = `Enter ${amount} friend information`;
+            }
+            const button = document.createElement('button');
+            for (let i = 0; i < amount; i++) {
+                const div = document.createElement('div');
+                div.className = 'row'; // Wrap each pair of input groups in a row
+                div.innerHTML = `
+                    <div class="col-md-6">
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Name" aria-describedby="inputGroup-sizing-sm" id="name${i}" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Age</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Age" aria-describedby="inputGroup-sizing-sm" id="age${i}" placeholder="Age">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+
+            button.textContent = 'Submit';
+            button.className = 'btn btn-primary';
+            button.style.marginRight = '10px';
+            button.addEventListener('click', () => {
+                if (!validate()) {
+                    alert('Please fill all input');
+                    return;
+                }
+                for (let j = 0; j < amount; j++) {
+                    const name = document.getElementById(`name${j}`).value;
+                    const age = document.getElementById(`age${j}`).value;
+                    friends.push({ name, age });
+                }
+                // remove input
+                container.innerHTML = '';
+                // render friend list
+                renderFriendList();
+            });
+            container.appendChild(button);
+            // reset button
+            const reset = document.createElement('button');
+            reset.textContent = 'Reset';
+            reset.className = 'btn btn-danger';
+            reset.addEventListener('click', () => {
+                for (let i = 0; i < amount; i++) {
+                    document.getElementById(`name${i}`).value = '';
+                    document.getElementById(`age${i}`).value = '';
+                }
+            });
+            container.appendChild(reset);
+        }
+        const start = document.getElementById('start');
+        start.addEventListener('click', () => {
+            // random number 1-9
+            const random = Math.floor(Math.random() * 9) + 1;
+            // remove button
+            start.remove();
+            // render input
+            renderListOfInput(random);
+        });
+
+    </script>
+</body>
+
+</html>
